@@ -1,15 +1,26 @@
 module Data
 
-export ProgramSynthesisProblem, InputOutputProblem
+export 
+    Problem,
+    Example,
+    IOExample
 
-abstract type ProgramSynthesisProblem end
+abstract type Example end
 
 """
-A program synthesis problem that is represented in the form of input-output examples.
+A program synthesis problem.
 """
-struct InputOutputProblem <: ProgramSynthesisProblem
-    examples::Vector{Tuple{Any, Any}}
+struct Problem
+    examples::AbstractVector{Example}
     filename::AbstractString
+end
+
+"""
+An input-output example.
+"""
+struct IOExample <: Example
+    in::Any
+    out::Any
 end
 
 """
@@ -19,8 +30,8 @@ Reads all files in the given directory and parses them line by line into an
 *TODO: Turn this into an iterator that doesn't load all data into memory
 at initialization.*
 """
-function readdata(directory::AbstractString, lineparser)::Vector{ProgramSynthesisProblem}
-    data::Vector{ProgramSynthesisProblem} = Vector([]) 
+function readdata(directory::AbstractString, lineparser::Function)::Vector{Problem}
+    data::Vector{Problem} = Vector([]) 
     for filename ∈ readdir(directory)
         filepath = joinpath(directory, filename)
         push!(data, readfile(filepath, lineparser))
@@ -32,45 +43,11 @@ end
 """
 Reads a file and parses every non-empty line using the line parser.
 """
-function readfile(filepath::AbstractString, lineparser::Function)::InputOutputProblem
+function readfile(filepath::AbstractString, lineparser::Function)::Problem
     file = open(filepath)
-    examples::Vector{Tuple{Any, Any}} = map(lineparser, readlines(file))
+    examples::Vector{Example} = map(lineparser, readlines(file))
     close(file)
-    return InputOutputProblem(examples, basename(filepath))
-end
-
-"""
-Parses a line from a file in the `strings` dataset
-"""
-function parseline_strings(line::AbstractString)::Tuple{String, String}
-    # Helper function that converts a character list string to a string 
-    # consisting of the characters
-    # Example: "['A','B','C']" → "ABC"
-    parsecharlist(x) = join([x[i] for i ∈ 3:4:length(x)])
-
-    # Extract input and output lists using the RegEx
-    matches = match(r"^[^\[\]]+(\[[^\[\]]+\])[^\[\]]+(\[[^\[\]]+\])", line)
-    
-    input = parse_char_list(matches[1])
-    output = parse_char_list(matches[2])
-    return (input, output)
-end
-
-"""
-Parses a line from a file in the `robots` dataset
-"""
-function parseline_robots(line::AbstractString)::Tuple{Int[], Int[]}
-    # Helper function that converts a string to a list of integers 
-    # consisting of the characters
-    # Example: "1,2,3" → [1, 2, 3]
-    parseintlist(x) = map(y -> parse(Int, y), split(x, ","))
-
-    # Remove unnecessary parts and split the input and output
-    split_line = split(replace(line, "pos(w("=>"", "))."=>""), "),w(")
-    
-    input = parseintlist(split_line[1])
-    output = parseintlist(split_line[2])
-    return (input, output)
+    return Problem(examples, basename(filepath))
 end
 
 """
