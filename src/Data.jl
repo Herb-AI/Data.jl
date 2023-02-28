@@ -19,7 +19,7 @@ end
 An input-output example.
 """
 struct IOExample <: Example
-    in::Any
+    in::Dict{Symbol, Any}
     out::Any
 end
 
