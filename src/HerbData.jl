@@ -1,4 +1,4 @@
-module Data
+module HerbData
 
 export 
     Problem,
@@ -71,4 +71,4 @@ function parseline_pixels(line::AbstractString)::Tuple{Matrix{Bool}, Matrix{Bool
     return (input, output)
 end
 
-end # module
+end # module HerbData
