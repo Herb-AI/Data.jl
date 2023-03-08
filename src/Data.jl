@@ -1,12 +1,20 @@
 module Data
 
 using Serialization
-using ..Grammars
 
 export 
     Problem,
     Example,
-    IOExample
+    IOExample,
+
+    readdata,
+    readfile,
+
+    read_IOexamples,
+    read_IOPexamples,
+    write_IOexamples,
+    write_IOPexamples
+
 
 abstract type Example end
 
@@ -22,7 +30,7 @@ end
 An input-output example.
 """
 struct IOExample <: Example
-    in::Any
+    in::Dict{Symbol, Any}
     out::Any
 end
 
@@ -64,7 +72,7 @@ end
 """
 Writes IO examples and the corresponding programs to disk by serializing them into a file using HDF5 checking for and appending the `.xiop`.
 """
-function write_IOPexamples(filepath::AbstractString, examples::Vector{Tuple{Data.IOExample, Grammars.Expr}})
+function write_IOPexamples(filepath::AbstractString, examples::Vector{Tuple{Data.IOExample, Any}})
     serialize(filepath * (endswith(filepath, ".xiop") ? "" : ".xiop"), examples)
 end
 
@@ -79,7 +87,7 @@ end
 """
 Reads serialized IO + program examples from disk after type checking.
 """
-function read_IOPexamples(filepath::AbstractString)::Vector{Tuple{Data.IOExample, Grammars.Expr}}
+function read_IOPexamples(filepath::AbstractString)::Vector{Tuple{Data.IOExample, Any}}
     @assert endswith(filepath, ".xiop")
     return deserialize(filepath)
 end
