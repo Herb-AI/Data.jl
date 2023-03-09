@@ -1,9 +1,20 @@
 module HerbData
 
+using Serialization
+
 export 
     Problem,
     Example,
-    IOExample
+    IOExample,
+
+    readdata,
+    readfile,
+
+    read_IOexamples,
+    read_IOPexamples,
+    write_IOexamples,
+    write_IOPexamples
+
 
 abstract type Example end
 
@@ -39,7 +50,6 @@ function readdata(directory::AbstractString, lineparser::Function)::Vector{Probl
     return data
 end
 
-
 """
 Reads a file and parses every non-empty line using the line parser.
 """
@@ -51,24 +61,33 @@ function readfile(filepath::AbstractString, lineparser::Function)::Problem
 end
 
 """
-Parses a line from a file in the `pixels` dataset
+Writes IO examples to disk by serializing them into a file using HDF5 checking for and appending the `.xio` file ending.
 """
-function parseline_pixels(line::AbstractString)::Tuple{Matrix{Bool}, Matrix{Bool}}
-    # Helper function that converts a string to a list of booleans
-    # Example: "0, 1, 1, 0" → [false, true, true, false]
-    parseboollist(x) = map(y -> y == "1", split(x, ", "))
-    
-    # Extract data using RegEx
-    matches = match(r"^pos\(w\([\d_]+,[\d_]+,(\d+),(\d+),\[([01, ]+)\]\)[,\)]w\([\d_]+,[\d_]+,(\d+),(\d+),\[([01, ]+)\]\)[,\)]\.$", line)
-    
-    # Parse data
-    input_width = parse(Int, matches[1])
-    input_height = parse(Int, matches[2])
-    input = reshape(parseboollist(matches[3]), (input_width, input_height))
-    output_width = parse(Int, matches[4])
-    output_height = parse(Int, matches[5])
-    output = reshape(parseboollist(matches[6]), (output_width, output_height))
-    return (input, output)
+function write_IOexamples(filepath::AbstractString, examples::Vector{IOExample})
+    serialize(filepath * (endswith(filepath, ".xio") ? "" : ".xio"), examples)
+end
+
+"""
+Writes IO examples and the corresponding programs to disk by serializing them into a file using HDF5 checking for and appending the `.xiop`.
+"""
+function write_IOPexamples(filepath::AbstractString, examples::Vector{Tuple{Data.IOExample, Any}})
+    serialize(filepath * (endswith(filepath, ".xiop") ? "" : ".xiop"), examples)
+end
+
+"""
+Reads serialized IO examples from disk after type checking.
+"""
+function read_IOexamples(filepath::AbstractString)::Vector{IOExample}
+    @assert endswith(filepath, ".xio")
+    return deserialize(filepath)
+end
+
+"""
+Reads serialized IO + program examples from disk after type checking.
+"""
+function read_IOPexamples(filepath::AbstractString)::Vector{Tuple{Data.IOExample, Any}}
+    @assert endswith(filepath, ".xiop")
+    return deserialize(filepath)
 end
 
 end # module HerbData
