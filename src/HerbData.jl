@@ -1,4 +1,4 @@
-module Data
+module HerbData
 
 using Serialization
 
@@ -50,7 +50,6 @@ function readdata(directory::AbstractString, lineparser::Function)::Vector{Probl
     return data
 end
 
-
 """
 Reads a file and parses every non-empty line using the line parser.
 """
@@ -60,7 +59,6 @@ function readfile(filepath::AbstractString, lineparser::Function)::Problem
     close(file)
     return Problem(examples, basename(filepath))
 end
-
 
 """
 Writes IO examples to disk by serializing them into a file using HDF5 checking for and appending the `.xio` file ending.
@@ -92,4 +90,4 @@ function read_IOPexamples(filepath::AbstractString)::Vector{Tuple{Data.IOExample
     return deserialize(filepath)
 end
 
-end # module
+end # module HerbData
