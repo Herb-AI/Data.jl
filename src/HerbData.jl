@@ -70,7 +70,7 @@ end
 """
 Writes IO examples and the corresponding programs to disk by serializing them into a file using HDF5 checking for and appending the `.xiop`.
 """
-function write_IOPexamples(filepath::AbstractString, examples::Vector{Tuple{Data.IOExample, Any}})
+function write_IOPexamples(filepath::AbstractString, examples::Vector{Tuple{IOExample, Any}})
     serialize(filepath * (endswith(filepath, ".xiop") ? "" : ".xiop"), examples)
 end
 
