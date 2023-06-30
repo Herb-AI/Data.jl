@@ -19,15 +19,18 @@ export
 abstract type Example end
 
 """
-A program synthesis problem.
+Problem
+
+Program synthesis problem defined with a vector of [`Example`](@ref)s
 """
 struct Problem
     examples::AbstractVector{Example}
-    filename::AbstractString
 end
 
 """
 An input-output example.
+`input` is a [`Dict`](@ref) of `{Symbol,Any}` where the symbol represents a variable in a program.
+`output` can be anything.
 """
 struct IOExample <: Example
     in::Dict{Symbol, Any}
