@@ -29,6 +29,13 @@ struct Problem
 end
 
 """
+    Base.getindex(p::Problem, indices) = Problem(p.examples[indices])
+
+Overwrite `Base.getindex` to access allow for slicing of problems.
+"""
+Base.getindex(p::Problem, indices) = Problem(p.examples[indices])
+
+"""
     struct IOExample <: Example
 
 An input-output example.
