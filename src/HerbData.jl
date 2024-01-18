@@ -6,15 +6,12 @@ export
     Problem,
     Example,
     IOExample,
-    IOPExample,
 
     readdata,
     readfile,
 
     read_IOexamples,
-    read_IOPexamples,
     write_IOexamples,
-    write_IOPexamples
 
 
 abstract type Example end
@@ -45,19 +42,6 @@ An input-output example.
 struct IOExample <: Example
     in::Dict{Symbol, Any}
     out::Any
-end
-
-
-"""
-    struct IOPExample <: Example
-
-An input-output example with an associated program.
-`ex` is an [`IOExample`](@ref).
-`program` is a program of arbitrary form. Please note that this is a pure container, and thus does not guarantee any checks on the validity of the program.
-"""
-struct IOPExample <: Example
-    ex::IOExample
-    program::Any
 end
 
 
@@ -100,14 +84,6 @@ function write_IOexamples(filepath::AbstractString, examples::Vector{IOExample})
     serialize(filepath * (endswith(filepath, ".xio") ? "" : ".xio"), examples)
 end
 
-"""
-    write_IOPexamples(filepath::AbstractString, examples::Vector{Tuple{IOExample, Any}})
-
-Writes IO examples and the corresponding programs to disk by serializing them into a file using HDF5 checking for and appending the `.xiop`.
-"""
-function write_IOPexamples(filepath::AbstractString, examples::Vector{IOPExample})
-    serialize(filepath * (endswith(filepath, ".xiop") ? "" : ".xiop"), examples)
-end
 
 """
     read_IOexamples(filepath::AbstractString)::Vector{IOExample}
@@ -118,15 +94,4 @@ function read_IOexamples(filepath::AbstractString)::Vector{IOExample}
     @assert endswith(filepath, ".xio")
     return deserialize(filepath)
 end
-
-"""
-    read_IOPexamples(filepath::AbstractString)::Vector{Tuple{IOPExample}
-
-Reads serialized IO + program examples from disk after type checking.
-"""
-function read_IOPexamples(filepath::AbstractString)::Vector{IOPExample}
-    @assert endswith(filepath, ".xiop")
-    return deserialize(filepath)
-end
-
 end # module HerbData

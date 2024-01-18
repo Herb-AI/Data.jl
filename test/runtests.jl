@@ -1,5 +1,5 @@
 using HerbData
-using ReTest
+using Test
 
 @testset "HerbData.jl" verbose=true begin
     include("test_io.jl")
