@@ -1,4 +1,7 @@
-# Data.jl
+| ⚠️  `HerbData.jl` is deprecated. Please use `HerbSpecification.jl` instead. All functionality should be directly re-usable. ⚠️ |
+|-----------------------------------------|
+
+# HerbData.jl
 
 [![Build Status](https://github.com/Herb-AI/HerbData.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/Herb-AI/HerbData.jl/actions/workflows/CI.yml?query=branch%3Amaster)
 
